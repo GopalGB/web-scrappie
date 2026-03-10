@@ -15,6 +15,20 @@
 
 Give it a spreadsheet of URLs, it opens each page in a real browser, grabs every product image and title it can find, and writes everything to a beautifully formatted Excel workbook -- one sheet per category, with optional embedded thumbnails.
 
+## Screenshots
+
+<p align="center">
+  <img src="screenshots/main-window.png" alt="Main Window" width="700">
+</p>
+
+<p align="center"><i>Clean dark UI -- configure settings, pick your file, hit Start</i></p>
+
+<p align="center">
+  <img src="screenshots/scraping-in-progress.png" alt="Scraping in Progress" width="700">
+</p>
+
+<p align="center"><i>Live progress tracking with color-coded log output</i></p>
+
 ## Why?
 
 I got tired of manually copying product images and titles from retail sites. Now I maintain a spreadsheet of URLs and let this handle the rest.
