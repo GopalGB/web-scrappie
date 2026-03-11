@@ -20,6 +20,8 @@ import time
 import re
 import hashlib
 import logging
+import json
+import csv
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlparse
@@ -76,7 +78,7 @@ requests.packages.urllib3.disable_warnings()
 log = logging.getLogger("web_scrappie")
 log.setLevel(logging.INFO)
 
-APP_VERSION = "1.1.0"
+APP_VERSION = "1.2.0"
 
 from tkinter import messagebox
 
@@ -507,6 +509,42 @@ def save_to_excel(all_data, output_path, download_images=False):
     return total
 
 
+def save_to_csv(all_data, output_path):
+    """Save scraped data as a flat CSV with columns:
+    Category, Title, Image URL, Page URL."""
+    csv_path = os.path.splitext(output_path)[0] + ".csv"
+    with open(csv_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Category", "Title", "Image URL", "Page URL"])
+        for cat, items in sorted(all_data.items()):
+            for item in items:
+                writer.writerow([
+                    cat,
+                    item.get("title", ""),
+                    item.get("image_url", ""),
+                    item.get("page_url", ""),
+                ])
+    return csv_path
+
+
+def save_to_json(all_data, output_path):
+    """Save scraped data as structured JSON with categories as keys."""
+    json_path = os.path.splitext(output_path)[0] + ".json"
+    structured = {}
+    for cat, items in sorted(all_data.items()):
+        structured[cat] = [
+            {
+                "title": item.get("title", ""),
+                "image_url": item.get("image_url", ""),
+                "page_url": item.get("page_url", ""),
+            }
+            for item in items
+        ]
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump(structured, f, indent=2, ensure_ascii=False)
+    return json_path
+
+
 # =============================================================================
 #  Scraper engine (background thread)
 # =============================================================================
@@ -612,8 +650,12 @@ def run_engine(cfg, log_cb, done_cb, stop_flag):
                 os.makedirs(out_dir, exist_ok=True)
             emit(f"saving: {out}")
             total = save_to_excel(all_results, out, cfg["download_images"])
+            csv_path = save_to_csv(all_results, out)
+            json_path = save_to_json(all_results, out)
             emit(f"\ndone. {total} items across {len(all_results)} categories.")
             emit(f"file: {out}")
+            emit(f"csv:  {csv_path}")
+            emit(f"json: {json_path}")
             done_cb(True)
         else:
             emit("\nnothing scraped.")
@@ -685,6 +727,15 @@ class App(ctk.CTk):
             font=ctk.CTkFont(size=13), text_color=_MUTED,
         ).pack(anchor="w", pady=(2, 0))
 
+        # theme toggle (sun/moon)
+        self._dark_mode = True
+        self.theme_btn = ctk.CTkButton(
+            header, text="\u263D  Dark", width=80, height=28,
+            corner_radius=8, fg_color="#334155", hover_color="#475569",
+            font=ctk.CTkFont(size=12), command=self._toggle_theme,
+        )
+        self.theme_btn.pack(side="right", padx=(8, 0), pady=(4, 0))
+
         # version badge
         badge = ctk.CTkFrame(header, fg_color=_ACCENT, corner_radius=12,
                               width=60, height=26)
@@ -727,6 +778,21 @@ class App(ctk.CTk):
             fg_color=_ACCENT, hover_color=_ACCENT_H,
             command=self._browse_input,
         ).pack(side="left", padx=(8, 0))
+
+        # preview URL count label
+        self.preview_label = ctk.CTkLabel(
+            inner, text="",
+            font=ctk.CTkFont(size=11, weight="bold"),
+            text_color=_SUCCESS,
+        )
+        self.preview_label.pack(anchor="w", padx=14, pady=(0, 8))
+
+        # drag & drop support (requires tkinterdnd2)
+        try:
+            self._file_entry.drop_target_register("DND_Files")
+            self._file_entry.dnd_bind("<<Drop>>", self._on_drop)
+        except Exception:
+            pass  # tkinterdnd2 not available, skip gracefully
 
         # ---- settings card --------------------------------------------------
         settings = self._card(body, "Scraper Settings")
@@ -795,6 +861,15 @@ class App(ctk.CTk):
         )
         self.stop_btn.pack(side="left", padx=(10, 0))
 
+        self.open_btn = ctk.CTkButton(
+            action, text="Open File", width=110, height=44,
+            corner_radius=10,
+            fg_color=_SUCCESS, hover_color="#16A34A",
+            font=ctk.CTkFont(size=15, weight="bold"),
+            state="disabled", command=self._open_output,
+        )
+        self.open_btn.pack(side="left", padx=(10, 0))
+
         # progress bar
         self.progress = ctk.CTkProgressBar(
             action, width=200, height=14, corner_radius=7,
@@ -819,6 +894,11 @@ class App(ctk.CTk):
             log_header, text="Live Log",
             font=ctk.CTkFont(size=12, weight="bold"),
         ).pack(side="left")
+        ctk.CTkButton(
+            log_header, text="Clear", width=55, height=24,
+            corner_radius=6, fg_color="#334155", hover_color="#475569",
+            font=ctk.CTkFont(size=11), command=self._clear_log,
+        ).pack(side="left", padx=(8, 0))
 
         self.log_box = ctk.CTkTextbox(
             log_frame,
@@ -880,6 +960,7 @@ class App(ctk.CTk):
                        ("All", "*.*")])
         if path:
             self.file_var.set(path)
+            self._preview_file(path)
 
     def _browse_output(self):
         path = ctk.filedialog.asksaveasfilename(
@@ -887,6 +968,52 @@ class App(ctk.CTk):
             filetypes=[("Excel", "*.xlsx")])
         if path:
             self.out_var.set(path)
+
+    def _preview_file(self, path):
+        """Parse the input file and show a summary of URLs found."""
+        try:
+            data = read_input_file(path)
+            n_urls = sum(len(v) for v in data.values())
+            n_cats = len(data)
+            self.preview_label.configure(
+                text=f"Found {n_urls} URLs across {n_cats} "
+                     f"categor{'y' if n_cats == 1 else 'ies'}")
+        except Exception as exc:
+            self.preview_label.configure(
+                text=f"Could not parse file: {exc}",
+                text_color=_DANGER)
+
+    def _toggle_theme(self):
+        """Switch between dark and light appearance mode."""
+        self._dark_mode = not self._dark_mode
+        if self._dark_mode:
+            ctk.set_appearance_mode("dark")
+            self.theme_btn.configure(text="\u263D  Dark")
+        else:
+            ctk.set_appearance_mode("light")
+            self.theme_btn.configure(text="\u2600  Light")
+
+    def _on_drop(self, event):
+        """Handle drag-and-drop file onto the input entry."""
+        path = event.data.strip().strip("{}")
+        if os.path.isfile(path):
+            self.file_var.set(path)
+            self._preview_file(path)
+
+    def _open_output(self):
+        """Open the output Excel file with the system default application."""
+        out = self.out_var.get().strip()
+        if out and os.path.exists(out):
+            try:
+                subprocess.run(["open", out])
+            except Exception as exc:
+                messagebox.showerror("Error", f"Could not open file:\n{exc}")
+
+    def _clear_log(self):
+        """Clear the log textbox."""
+        self.log_box.configure(state="normal")
+        self.log_box.delete("1.0", "end")
+        self.log_box.configure(state="disabled")
 
     def _log(self, msg):
         def _do():
@@ -936,6 +1063,7 @@ class App(ctk.CTk):
         self._url_done = 0
         self.start_btn.configure(state="disabled")
         self.stop_btn.configure(state="normal")
+        self.open_btn.configure(state="disabled")
         self.status_var.set("Running...")
         self.progress.set(0)
         self.progress_label.configure(text="starting...")
@@ -961,6 +1089,7 @@ class App(ctk.CTk):
             self.after(0, lambda: self.stop_btn.configure(state="disabled"))
             if ok:
                 self.after(0, lambda: self.progress.set(1.0))
+                self.after(0, lambda: self.open_btn.configure(state="normal"))
                 self.after(0, lambda: self.status_var.set(
                     f"Done -- {cfg['output_file']}"))
                 self.after(0, lambda: messagebox.showinfo(

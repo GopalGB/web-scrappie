@@ -1,7 +1,5 @@
-<h1 align="center">web_scrappie</h1>
-
 <p align="center">
-  <b>Desktop GUI tool for scraping product images & metadata from e-commerce websites</b>
+  <img src="assets/banner.svg" alt="web_scrappie banner" width="900">
 </p>
 
 <p align="center">
@@ -9,11 +7,51 @@
   <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="MIT License">
   <img src="https://img.shields.io/badge/GUI-customtkinter-blue?style=for-the-badge" alt="CustomTkinter">
   <img src="https://img.shields.io/badge/browser-Chrome-orange?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Chrome">
+  <img src="https://img.shields.io/github/stars/GopalGB/web-scrappie?style=for-the-badge&color=yellow&logo=github" alt="GitHub Stars">
+</p>
+
+<p align="center">
+  <b>Desktop GUI tool for scraping product images & metadata from e-commerce websites</b><br>
+  <sub>Give it a spreadsheet of URLs. Get back a beautifully formatted workbook with images, titles, and more.</sub>
 </p>
 
 ---
 
-Give it a spreadsheet of URLs, it opens each page in a real browser, grabs every product image and title it can find, and writes everything to a beautifully formatted Excel workbook -- one sheet per category, with optional embedded thumbnails.
+## What's New in v1.2.0
+
+> Fresh features to make scraping smoother and faster.
+
+| | Feature | Details |
+|---|---------|---------|
+| :page_facing_up: | **CSV & JSON Export** | Export results as CSV or JSON alongside the default Excel workbook |
+| :art: | **Dark / Light Theme Toggle** | Switch between dark and light themes from the GUI |
+| :mag: | **Preview URL Count** | See how many URLs will be scraped before you hit Start |
+| :open_file_folder: | **Auto-Open Output** | Automatically open the output file when scraping completes |
+| :wastebasket: | **Clear Log Button** | One-click clear for the log panel |
+| :inbox_tray: | **Drag & Drop File Input** | Drop your spreadsheet right onto the window -- no file picker needed |
+
+---
+
+## Demo
+
+<p align="center">
+
+```
+   +-----------------+          +-------------------+          +------------------+
+   |                 |          |                   |          |                  |
+   |   INPUT FILE    |  -----→ |   web_scrappie    |  -----→ |     OUTPUT       |
+   |                 |          |                   |          |                  |
+   |  .xlsx / .ods   |          |  Opens browser    |          |  Excel workbook  |
+   |  .xls  / .pdf   |          |  Scrolls pages    |          |  CSV / JSON      |
+   |                 |          |  Extracts images  |          |  Downloaded imgs |
+   +-----------------+          +-------------------+          +------------------+
+```
+
+</p>
+
+<p align="center"><sub><b>Input File</b> (URLs by category) → <b>Scrape</b> (automated browser) → <b>Output</b> (formatted workbook + images)</sub></p>
+
+---
 
 ## Screenshots
 
@@ -29,21 +67,63 @@ Give it a spreadsheet of URLs, it opens each page in a real browser, grabs every
 
 <p align="center"><i>Live progress tracking with color-coded log output</i></p>
 
+---
+
 ## Why?
 
 I got tired of manually copying product images and titles from retail sites. Now I maintain a spreadsheet of URLs and let this handle the rest.
 
+---
+
 ## Features
 
+<table>
+<tr>
+<td width="50%" valign="top">
+
+**Extraction & Parsing**
+
 - **Smart input parsing** -- reads URLs from `.ods`, `.xlsx`, `.xls`, or `.pdf` files
-- **Anti-detection** -- uses `undetected-chromedriver` to bypass bot protection
-- **Deep page scraping** -- auto-scrolls, clicks "Load More" buttons, waits for lazy content
-- **3 extraction methods** -- tries preloaded state (React/Next.js), DOM links, then standalone images
-- **Parallel image downloads** -- configurable thread count for fast downloads
+- **3 extraction methods** -- preloaded state (React/Next.js), DOM links, then standalone images
+- **Deep page scraping** -- auto-scrolls, clicks "Load More", waits for lazy content
+- **Deduplication** -- results are deduplicated by image URL per category
+
+</td>
+<td width="50%" valign="top">
+
+**Output & Performance**
+
+- **Multiple export formats** -- Excel, CSV, and JSON
 - **Excel with thumbnails** -- embeds scaled images directly into cells
-- **Formatted output** -- alternating row colors, frozen headers, auto-filters, hyperlinked URLs
-- **Auto-installs dependencies** -- just run it, first launch handles everything
+- **Formatted output** -- alternating row colors, frozen headers, auto-filters, hyperlinks
+- **Parallel image downloads** -- configurable thread count for fast downloads
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+**Browser & Network**
+
+- **Anti-detection** -- uses `undetected-chromedriver` to bypass bot protection
 - **Handles SSL issues** -- works on restricted/corporate networks
+- **Headless mode** -- run Chrome invisibly for faster scraping
+
+</td>
+<td width="50%" valign="top">
+
+**Developer Experience**
+
+- **Auto-installs dependencies** -- just run it, first launch handles everything
+- **Dark / Light theme** -- toggle from the GUI
+- **Drag & drop** -- drop files directly onto the window
+- **Live logging** -- color-coded progress with clear-log support
+
+</td>
+</tr>
+</table>
+
+---
 
 ## Quick Start
 
@@ -70,6 +150,8 @@ pip install -r requirements.txt
 python web_scrappie.py
 ```
 
+---
+
 ## Input File Format
 
 Your spreadsheet needs at least two columns. The tool auto-detects which column has categories and which has URLs based on header names.
@@ -84,6 +166,8 @@ Your spreadsheet needs at least two columns. The tool auto-detects which column 
 - Multiple sheets are supported -- each sheet is processed independently
 - PDFs: extracts every URL found in text and annotations
 
+---
+
 ## Settings
 
 All configurable from the GUI:
@@ -97,6 +181,8 @@ All configurable from the GUI:
 | **Headless** | Off | Run Chrome invisibly (faster, but some sites block it) |
 | **Download Images** | Off | Download images locally & embed thumbnails in Excel |
 
+---
+
 ## How the Scraper Works
 
 The scraper tries three methods in order, using the first one that returns results:
@@ -107,6 +193,8 @@ The scraper tries three methods in order, using the first one that returns resul
 
 3. **Standalone Images** -- Falls back to grabbing every `<img>` with alt text, filtering out icons and tiny spacer images.
 
+---
+
 ## Output
 
 The Excel workbook includes:
@@ -116,12 +204,18 @@ The Excel workbook includes:
 - **Embedded thumbnails** (if enabled) -- scaled to fit cells without stretching
 - **Styling** -- alternating row colors, frozen header rows, auto-filters, clickable hyperlinks
 
+New in v1.2.0: also exports **CSV** and **JSON** files alongside the workbook.
+
+---
+
 ## Tips
 
 - **Getting zero results?** Uncheck headless mode -- some sites aggressively block headless browsers
 - **SSL errors?** The tool handles certificate issues automatically, useful on corporate networks
 - **Small images skipped** -- files under 500 bytes (tracking pixels, spacers) are filtered out
 - **Deduplication** -- results are deduplicated by image URL within each category
+
+---
 
 ## Tech Stack
 
@@ -133,6 +227,8 @@ The Excel workbook includes:
 | PDF parsing | [pdfplumber](https://github.com/jsvine/pdfplumber) |
 | Image processing | [Pillow](https://pillow.readthedocs.io/) |
 | HTTP | [requests](https://docs.python-requests.org/) |
+
+---
 
 ## License
 

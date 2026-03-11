@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 200" width="900" height="200">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0F172A"/>
+      <stop offset="50%" style="stop-color:#162544"/>
+      <stop offset="100%" style="stop-color:#1E3A5F"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#38BDF8"/>
+      <stop offset="100%" style="stop-color:#818CF8"/>
+    </linearGradient>
+    <linearGradient id="webLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#38BDF8;stop-opacity:0.6"/>
+      <stop offset="100%" style="stop-color:#818CF8;stop-opacity:0.6"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="textShadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="200" rx="12" fill="url(#bg)"/>
+
+  <!-- Subtle grid pattern -->
+  <g opacity="0.04" stroke="#fff" stroke-width="0.5">
+    <line x1="0" y1="40" x2="900" y2="40"/>
+    <line x1="0" y1="80" x2="900" y2="80"/>
+    <line x1="0" y1="120" x2="900" y2="120"/>
+    <line x1="0" y1="160" x2="900" y2="160"/>
+    <line x1="150" y1="0" x2="150" y2="200"/>
+    <line x1="300" y1="0" x2="300" y2="200"/>
+    <line x1="450" y1="0" x2="450" y2="200"/>
+    <line x1="600" y1="0" x2="600" y2="200"/>
+    <line x1="750" y1="0" x2="750" y2="200"/>
+  </g>
+
+  <!-- Decorative web/network nodes on left -->
+  <g filter="url(#glow)" opacity="0.35">
+    <!-- Web strands -->
+    <line x1="60" y1="40" x2="120" y2="80" stroke="url(#webLine)" stroke-width="1.5"/>
+    <line x1="120" y1="80" x2="80" y2="140" stroke="url(#webLine)" stroke-width="1.5"/>
+    <line x1="80" y1="140" x2="150" y2="160" stroke="url(#webLine)" stroke-width="1.5"/>
+    <line x1="120" y1="80" x2="180" y2="60" stroke="url(#webLine)" stroke-width="1.5"/>
+    <line x1="150" y1="160" x2="190" y2="120" stroke="url(#webLine)" stroke-width="1.5"/>
+    <line x1="180" y1="60" x2="190" y2="120" stroke="url(#webLine)" stroke-width="1.5"/>
+    <!-- Nodes -->
+    <circle cx="60" cy="40" r="3" fill="#38BDF8"/>
+    <circle cx="120" cy="80" r="4" fill="#818CF8"/>
+    <circle cx="80" cy="140" r="3" fill="#38BDF8"/>
+    <circle cx="150" cy="160" r="3.5" fill="#818CF8"/>
+    <circle cx="180" cy="60" r="3" fill="#38BDF8"/>
+    <circle cx="190" cy="120" r="3.5" fill="#818CF8"/>
+  </g>
+
+  <!-- Decorative web/network nodes on right -->
+  <g filter="url(#glow)" opacity="0.35">
+    <line x1="720" y1="50" x2="780" y2="90" stroke="url(#webLine)" stroke-width="1.5"/>
+    <line x1="780" y1="90" x2="740" y2="150" stroke="url(#webLine)" stroke-width="1.5"/>
+    <line x1="740" y1="150" x2="820" y2="140" stroke="url(#webLine)" stroke-width="1.5"/>
+    <line x1="780" y1="90" x2="850" y2="60" stroke="url(#webLine)" stroke-width="1.5"/>
+    <line x1="820" y1="140" x2="850" y2="60" stroke="url(#webLine)" stroke-width="1.5"/>
+    <circle cx="720" cy="50" r="3" fill="#38BDF8"/>
+    <circle cx="780" cy="90" r="4" fill="#818CF8"/>
+    <circle cx="740" cy="150" r="3" fill="#38BDF8"/>
+    <circle cx="820" cy="140" r="3.5" fill="#818CF8"/>
+    <circle cx="850" cy="60" r="3" fill="#38BDF8"/>
+  </g>
+
+  <!-- Spider icon -->
+  <g transform="translate(290, 68)" filter="url(#glow)" opacity="0.9">
+    <!-- Spider body -->
+    <ellipse cx="0" cy="0" rx="10" ry="7" fill="#38BDF8" opacity="0.8"/>
+    <ellipse cx="0" cy="12" rx="13" ry="10" fill="#38BDF8" opacity="0.8"/>
+    <!-- Eyes -->
+    <circle cx="-4" cy="-2" r="2" fill="#0F172A"/>
+    <circle cx="4" cy="-2" r="2" fill="#0F172A"/>
+    <!-- Legs left -->
+    <path d="M-10,4 Q-28,-8 -32,-18" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round"/>
+    <path d="M-12,10 Q-30,4 -36,0" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round"/>
+    <path d="M-12,16 Q-30,20 -34,28" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round"/>
+    <path d="M-10,20 Q-24,32 -28,40" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round"/>
+    <!-- Legs right -->
+    <path d="M10,4 Q28,-8 32,-18" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round"/>
+    <path d="M12,10 Q30,4 36,0" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round"/>
+    <path d="M12,16 Q30,20 34,28" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round"/>
+    <path d="M10,20 Q24,32 28,40" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round"/>
+    <!-- Web thread going up -->
+    <line x1="0" y1="-7" x2="0" y2="-30" stroke="#38BDF8" stroke-width="1.2" opacity="0.5" stroke-dasharray="3,3"/>
+  </g>
+
+  <!-- Main title -->
+  <text x="450" y="92" text-anchor="middle" fill="white" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="52" font-weight="700" letter-spacing="-1" filter="url(#textShadow)">web_scrappie</text>
+
+  <!-- Accent underline -->
+  <rect x="340" y="104" width="220" height="3" rx="1.5" fill="url(#accent)" opacity="0.8"/>
+
+  <!-- Subtitle -->
+  <text x="450" y="132" text-anchor="middle" fill="#94A3B8" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" letter-spacing="3">E-COMMERCE PRODUCT IMAGE SCRAPER</text>
+
+  <!-- Version badge -->
+  <rect x="387" y="148" width="56" height="22" rx="11" fill="#38BDF8" opacity="0.15"/>
+  <text x="415" y="163" text-anchor="middle" fill="#38BDF8" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600">v1.2.0</text>
+
+  <!-- Shopping cart icon (right of version) -->
+  <g transform="translate(460, 148)" opacity="0.4">
+    <path d="M2,2 L6,2 L9,14 L22,14 L24,6 L8,6" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="11" cy="18" r="2" fill="#94A3B8"/>
+    <circle cx="20" cy="18" r="2" fill="#94A3B8"/>
+  </g>
+
+  <!-- Bottom edge glow -->
+  <rect x="0" y="196" width="900" height="4" rx="0" fill="url(#accent)" opacity="0.3"/>
+</svg>
